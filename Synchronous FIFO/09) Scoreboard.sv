@@ -4,7 +4,7 @@
 
 import sync_fifo_pkg::*;
 
-class sync_fifo_scoreboard #(parameter DEPTH=16, WIDTH=16) extends uvm_scoreboard;
+class sync_fifo_scoreboard #(DEPTH = 8, WIDTH = 8) extends uvm_scoreboard;
   `uvm_component_param_utils(sync_fifo_scoreboard#(DEPTH, WIDTH))
 
   uvm_analysis_imp #(sync_fifo_trans#(DEPTH, WIDTH), sync_fifo_scoreboard#(DEPTH, WIDTH)) item_got;
