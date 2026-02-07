@@ -5,7 +5,7 @@
 import sync_fifo_pkg::*;
 
 class sync_fifo_driver #(DEPTH = 8, WIDTH = 8) extends uvm_driver #(sync_fifo_trans #(DEPTH, WIDTH));
-  `uvm_component_utils(sync_fifo_driver #(DEPTH, WIDTH))
+  `uvm_component_param_utils(sync_fifo_driver #(DEPTH, WIDTH))
   
   // Virtual Interface
   virtual sync_fifo_intf#(DEPTH, WIDTH) vintf;
@@ -33,9 +33,9 @@ class sync_fifo_driver #(DEPTH = 8, WIDTH = 8) extends uvm_driver #(sync_fifo_tr
   
     virtual task driver(sync_fifo_trans#(DEPTH, WIDTH) tr);
     @(vintf.drv);
-    vintf.w_en    <= tr.w_en;
-    vintf.r_en    <= tr.r_en;
-    vintf.data_in <= tr.data_in;
+    vintf.drv.w_en    <= tr.w_en;
+    vintf.drv.r_en    <= tr.r_en;
+    vintf.drv.data_in <= tr.data_in;
          
     // Using .sprint() to uses the utility macros
     `uvm_info("DRIVER", $sformatf("Driving Transaction:\n%s", tr.sprint()), UVM_LOW)
