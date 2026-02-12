@@ -20,7 +20,7 @@ class async_fifo_driver #(DEPTH = 8, WIDTH = 8) extends uvm_driver #(async_fifo_
     `uvm_fatal("NO_VINTF","Virtual Interface not found in Driver")
   endfunction
   
-  // Using Virtual task
+  // Run phase
   task run_phase(uvm_phase phase);
     forever begin
       seq_item_port.get_next_item(req);
@@ -29,28 +29,26 @@ class async_fifo_driver #(DEPTH = 8, WIDTH = 8) extends uvm_driver #(async_fifo_
     end
   endtask
   
+  // Virtual task
   virtual task driver(async_fifo_trans#(DEPTH, WIDTH) tr);
     
     // Handle Write Domain
-    if (tr.w_en) begin
-      @(vintf.w_drv_cb);
+     @(vintf.w_drv_cb);
+      vintf.w_drv_cb.w_rst   <= tr.w_rst;
       vintf.w_drv_cb.w_en    <= tr.w_en;
       vintf.w_drv_cb.data_in <= tr.data_in;
-    end
 
     // Handle Read Domain
-    if (tr.r_en) begin
-      @(vintf.r_drv_cb);
+     @(vintf.r_drv_cb);
+      vintf.r_drv_cb.r_rst   <= tr.r_rst;
       vintf.r_drv_cb.r_en    <= tr.r_en;
-    end         
+    
       // Using .sprint() to uses the utility macros
-      `uvm_info("DRIVER", $sformatf("Driving Transaction:\n%s", tr.sprint()), UVM_LOW)
-      `uvm_info("PARAM_CHECK", $sformatf("FIFO DEPTH: %0d", DEPTH), UVM_LOW)
-   
+    `uvm_info("DRIVER",$sformatf("SIGNALS: w_rst = %0h | w_en = %0h | Data In = %0h | r_rst = %0h | r_en = %0h",tr.w_rst, tr.w_en, tr.data_in, tr.r_rst, tr.r_en),UVM_LOW) 
+       // `uvm_info("DRIVER", $sformatf("Driving Transaction:\n%s", tr.sprint()), UVM_LOW)
+      //`uvm_info("PARAM_CHECK", $sformatf("FIFO DEPTH: %0d", DEPTH), UVM_LOW)
+    
   endtask
   
 endclass
 `endif
-  
-  
-       
