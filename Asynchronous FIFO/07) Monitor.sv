@@ -35,31 +35,31 @@ virtual task run_phase(uvm_phase phase);
     // WRITE MONITOR
     forever begin
       @(vintf.w_mon_cb);
-      if((vintf.w_mon_cb.w_en && !vintf.w_mon_cb.full)||!vintf.w_mon_cb.w_rst)begin
        
       w_tr = async_fifo_trans#(DEPTH, WIDTH)::type_id::create("w_tr", this);
       w_tr.w_rst   = vintf.w_mon_cb.w_rst;
       w_tr.w_en    = vintf.w_mon_cb.w_en;
       w_tr.data_in = vintf.w_mon_cb.data_in;
       w_tr.full    = vintf.w_mon_cb.full;
-      w_ap.write(w_tr);
-      `uvm_info("MONITOR", $sformatf("Monitoring Transaction:\n%s", w_tr.sprint()), UVM_LOW)
-     end
+        
+      //`uvm_info("MONITOR", $sformatf("Monitoring Transaction:\n%s", w_tr.sprint()), UVM_LOW)
+        `uvm_info("MONITOR",$sformatf("WRITE SIGNALS: w_rst = %0h | w_en = %0h | Data In = %0h | Full = %0h",w_tr.w_rst, w_tr.w_en, w_tr.data_in, w_tr.full),UVM_LOW) 
+        w_ap.write(w_tr);
     end
 
     // READ MONITOR
     forever begin
       @(vintf.r_mon_cb);
-      if((vintf.r_mon_cb.r_en && !vintf.r_mon_cb.empty)||!vintf.r_mon_cb.r_rst)begin
       
       r_tr = async_fifo_trans#(DEPTH, WIDTH)::type_id::create("r_tr", this);
       r_tr.r_rst    = vintf.r_mon_cb.r_rst;
       r_tr.r_en     = vintf.r_mon_cb.r_en;
       r_tr.data_out = vintf.r_mon_cb.data_out;
       r_tr.empty    = vintf.r_mon_cb.empty;
-      r_ap.write(r_tr);
-      `uvm_info("MONITOR", $sformatf("Monitoring Transaction:\n%s", r_tr.sprint()), UVM_LOW)
-      end
+
+      //`uvm_info("MONITOR", $sformatf("Monitoring Transaction:\n%s", r_tr.sprint()), UVM_LOW)
+        `uvm_info("MONITOR",$sformatf("READ SIGNALS: r_rst = %0h | r_en = %0h | Data Out = %0h | Empty = %0h",r_tr.r_rst, r_tr.r_en, r_tr.data_out, r_tr.empty),UVM_LOW) 
+        r_ap.write(r_tr);
     end
   join
 endtask
