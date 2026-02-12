@@ -4,7 +4,7 @@
 
 class async_fifo_trans #(DEPTH = 8, WIDTH = 8) extends uvm_sequence_item;
   
-  bit w_rst, r_rst; 
+  rand bit w_rst, r_rst; 
   rand bit w_en, r_en;
   rand bit [WIDTH-1:0] data_in;
        bit [WIDTH-1:0] data_out;
