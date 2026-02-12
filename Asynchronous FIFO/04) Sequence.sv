@@ -13,17 +13,15 @@ class async_fifo_write_seq #(DEPTH = 8, WIDTH = 8) extends uvm_sequence #(async_
   task body();
     // Write until FIFO is full
     `uvm_info("SEQ_WRITE", "Starting FIFO Fill Sequence", UVM_LOW)
-    repeat(DEPTH) begin
-      `uvm_do_with(req, {req.w_en == 1; req.r_en == 0;}) 
-    end
 
-    // Randomized Writes
-    repeat(30) begin
+    for (int i = 0; i < DEPTH+1; i++) begin
       `uvm_do_with(req, {
-        req.w_en == 1; 
-        req.r_en == 0; 
-      })
+        req.w_en == 1;
+        req.w_rst == 0; 
+        req.r_rst == 0; 
+    })
     end
+   
   endtask
 endclass
 
@@ -38,17 +36,14 @@ class async_fifo_read_seq #(DEPTH = 8, WIDTH = 8) extends uvm_sequence #(async_f
   task body();
     // read until Empty
     `uvm_info("SEQ_READ", "Starting FIFO Empty Sequence", UVM_LOW)
-    repeat(DEPTH) begin
-      `uvm_do_with(req, {req.r_en == 1; req.w_en == 0;})
+    for (int i = 0; i < DEPTH; i++) begin
+     `uvm_do_with(req, {
+        req.r_en == 1;
+        req.w_rst == 0; 
+        req.r_rst == 0; 
+    })
     end
-
-    // Randomized Reads
-    repeat(30) begin
-      `uvm_do_with(req, {
-        req.r_en == 1; 
-        req.w_en == 0;
-      })
-    end
+   
   endtask
 endclass
 
@@ -66,6 +61,10 @@ class async_fifo_seq #(DEPTH = 8, WIDTH = 8) extends uvm_sequence #(async_fifo_t
   task body();
     wseq = async_fifo_write_seq#(DEPTH, WIDTH)::type_id::create("wseq");
     rseq = async_fifo_read_seq#(DEPTH, WIDTH)::type_id::create("rseq");
+    
+    `uvm_info("SEQ_MAIN", "Starting Write Operations", UVM_LOW)
+       wseq.start(m_sequencer);
+    
 
     `uvm_info("SEQ_MAIN", "Starting Parallel Read & Write Operations", UVM_LOW)
     
