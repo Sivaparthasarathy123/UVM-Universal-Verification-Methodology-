@@ -3,8 +3,8 @@
 `define ASF_INTERFACE_SV
 
 // Interface
-interface async_fifo_intf #(parameter DEPTH = 8, WIDTH = 8)(input logic w_clk, r_clk, w_rst, r_rst);
-
+interface async_fifo_intf #(parameter DEPTH = 8, WIDTH = 8)(input logic w_clk, r_clk);
+  logic w_rst, r_rst;
   logic w_en, r_en;
   logic [WIDTH-1:0] data_in;
   logic [WIDTH-1:0] data_out;
@@ -12,8 +12,8 @@ interface async_fifo_intf #(parameter DEPTH = 8, WIDTH = 8)(input logic w_clk, r
   
   // clocking block for driver for write
   clocking w_drv_cb @(negedge w_clk);
-    default input#2 output#2;
-    output w_en, data_in;
+    default input#1 output#1;
+    output w_rst, w_en, data_in;
     input full;
   endclocking
   
@@ -25,8 +25,8 @@ interface async_fifo_intf #(parameter DEPTH = 8, WIDTH = 8)(input logic w_clk, r
   
   // clocking block for driver for read
   clocking r_drv_cb @(negedge r_clk);
-    default input#2 output#2;
-    output r_en; 
+    default input#1 output#1;
+    output r_rst, r_en; 
     input data_out, empty;
   endclocking
   
