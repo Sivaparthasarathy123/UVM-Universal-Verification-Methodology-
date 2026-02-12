@@ -13,7 +13,7 @@ import async_fifo_pkg::*;
 
 module async_fifo_tb;
  
-  bit w_clk, r_clk, w_rst, r_rst;
+  bit w_clk, r_clk;
 
   // Clock Generation
   initial w_clk = 0;
@@ -23,16 +23,16 @@ module async_fifo_tb;
 
   // Reset Generation
   initial begin
-    w_rst = 1;
-    r_rst = 1;
-    @(posedge w_clk) w_rst = 0;
-    @(posedge r_clk) r_rst = 0;
+    vif.w_rst = 1;
+    vif.r_rst = 1;
+    @(posedge w_clk) vif.w_rst = 0;
+    @(posedge r_clk) vif.r_rst = 0;
 
-    #100 w_rst = 1;
-         r_rst = 1;
+    #100 vif.w_rst = 1;
+         vif.r_rst = 1;
     
-    #100 w_rst = 0;
-         r_rst = 0;
+    #100 vif.w_rst = 0;
+         vif.r_rst = 0;
   end
 
   async_fifo_intf #(DEPTH, WIDTH) vif(w_clk, r_clk);
