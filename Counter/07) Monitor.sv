@@ -28,12 +28,15 @@ class counter_monitor extends uvm_monitor;
       @(vintf.mon); 
 
       tr = counter_seq_item::type_id::create("tr");
-
+      
       tr.rst      = vintf.mon.rst;
       tr.up_down  = vintf.mon.up_down;
       tr.count    = vintf.mon.count;
 
+      // `uvm_info("MONITOR", $sformatf("Monitoring Transaction:\n%s", tr.sprint()), UVM_LOW)
+      `uvm_info("MONITOR", $sformatf("Monitoring Transaction: Time = %0t | rst = %0b | up_down = %0b | count = %0d (%0b)",$time,tr.rst,tr.up_down, tr.count, tr.count), UVM_LOW)
       analysis_port.write(tr);
+      
     end
   endtask
 endclass
