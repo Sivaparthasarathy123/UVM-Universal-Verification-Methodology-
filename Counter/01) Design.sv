@@ -31,3 +31,5 @@ module nbit_updown_modn_counter #(
   end
 
 endmodule
+
+// https://edaplayground.com/x/iLpM
