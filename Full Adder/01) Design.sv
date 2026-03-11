@@ -6,3 +6,5 @@ module Fulladder #(parameter N = 8)(
   assign {intf.carry, intf.sum} = intf.a + intf.b + intf.c;
   
 endmodule
+
+// https://edaplayground.com/x/FfV7
