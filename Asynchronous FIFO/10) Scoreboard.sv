@@ -25,25 +25,24 @@ class async_fifo_scoreboard #(DEPTH = 8, WIDTH = 8) extends uvm_scoreboard;
     read_imp  = new("read_imp",  this);
   endfunction
 
-  // ================= WRITE SIDE =================
+  // Write
   virtual function void write_wr(async_fifo_tr_t tr);
     // Reset handling
     if (tr.w_rst || tr.r_rst) begin
       fifo_queue.delete();
+      repeat (2) expected_data = 0;
       `uvm_info("SCB_RST", "Scoreboard queue flushed due to reset", UVM_MEDIUM)
-     // return;
     end
 
     // Normal write
     if (tr.w_en && !tr.full) begin
       fifo_queue.push_back(tr.data_in);
-      `uvm_info("SCB_WRITE", $sformatf("WRITE: %h | Q size=%0d", tr.data_in, fifo_queue.size()), UVM_LOW)
+      `uvm_info("SCB_WRITE", $sformatf("WRITE = %h | Q size = %0d\n", tr.data_in, fifo_queue.size()), UVM_LOW)
     end
   endfunction
 
-  // ================= READ SIDE =================
+  // Read
   virtual function void write_rd(async_fifo_tr_t tr);
-    // Only process read if FIFO is not empty
     if (tr.r_en && !tr.empty) begin
       if (fifo_queue.size() == 0) begin
         `uvm_error("SCB_UNDERFLOW", "Read occurred when Scoreboard queue is empty")
@@ -53,9 +52,9 @@ class async_fifo_scoreboard #(DEPTH = 8, WIDTH = 8) extends uvm_scoreboard;
       expected_data = fifo_queue.pop_front();
 
       if (tr.data_out === expected_data)
-        `uvm_info("SCB_PASS", $sformatf("MATCH exp=%h got=%h", expected_data, tr.data_out), UVM_LOW)
+        `uvm_info("-------------SCB_PASS-------------", $sformatf("MATCH exp = %h got = %h\n", expected_data, tr.data_out), UVM_LOW)
       else
-        `uvm_error("SCB_FAIL", $sformatf("MISMATCH exp=%h got=%h", expected_data, tr.data_out))
+        `uvm_error("------------SCB_FAIL-------------", $sformatf("MISMATCH exp = %h got = %h\n", expected_data, tr.data_out))
     end
   endfunction
 
